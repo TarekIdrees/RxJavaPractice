@@ -4,4 +4,7 @@
     <string name="next_fragment">Next Fragment</string>
     <string name="second_fragment_title">This is the second Fragment</string>
     <string name="third_fragment_title">This is the third fragment</string>
+    <string name="send_message">send message</string>
+    <string name="message">message</string>
+    <string name="fourth_fragment">This is the fourth fragment</string>
 </resources>

@@ -1,78 +1,43 @@
 package com.example.rxjavapractice.ui.activity
 
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.core.widget.doOnTextChanged
-import com.example.rxjavapractice.add
+import com.example.rxjavapractice.AirplaneModeChangedReceiver
 import com.example.rxjavapractice.databinding.ActivityMainBinding
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
+import org.greenrobot.eventbus.EventBus
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
-    lateinit var compositeDisposable: CompositeDisposable
-
+    private lateinit var receiver: AirplaneModeChangedReceiver
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        compositeDisposable = CompositeDisposable()
-
-        foo()
+        init()
+        addCallbacks()
     }
 
-    private fun foo() {
-        val singleObservable = Single.just(6)
-        singleObservable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                ::onDataSuccess,
-                ::onDataFailed
-            ).add(compositeDisposable)
+    private fun init() {
+        receiver = AirplaneModeChangedReceiver()
     }
 
-    private fun onDataSuccess(result: Any) {
-        Log.v(LOG_TAG, "result -> $result")
+    private fun addCallbacks() {
+        setupAirplaneReceiver()
     }
 
-    private fun onDataFailed(error: Throwable) {
-        Log.v(LOG_TAG, "error = $error")
+    private fun setupAirplaneReceiver() {
+        IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED).also {
+            registerReceiver(receiver, it)
+        }
     }
 
-    private fun Declarative() {
-        val happy = Observable.just(5, 7, 10, 123)
-        happy.subscribe()
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(receiver)
     }
-
-    private fun Imperative() {
-        var sad = 5
-        Log.v(LOG_TAG, sad.toString())
-        sad = 7
-        Log.v(LOG_TAG, sad.toString())
-        sad = 20
-        Log.v(LOG_TAG, sad.toString())
-        sad = 80
-        Log.v(LOG_TAG, sad.toString())
-        sad = 123
-        Log.v(LOG_TAG, sad.toString())
-    }
-
-
-    override fun onDestroy() {
-        compositeDisposable.dispose()
-        super.onDestroy()
-    }
-
-    companion object {
-        val LOG_TAG: String = this::class.java.name
-    }
-
 
 }
 

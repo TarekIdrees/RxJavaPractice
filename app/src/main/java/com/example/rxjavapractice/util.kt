@@ -14,7 +14,7 @@ fun Fragment.changeFragment(fragment: Fragment, changeType: ChangeFragmentType) 
         ChangeFragmentType.ADD -> {
             requireActivity().supportFragmentManager.beginTransaction().apply {
                 add(R.id.fragment_container, fragment)
-                addToBackStack(fragment::class.java.name)
+                addToBackStack(fragment::class.java.simpleName)
                 commit()
             }
         }
@@ -31,4 +31,8 @@ fun Fragment.changeFragment(fragment: Fragment, changeType: ChangeFragmentType) 
             }
         }
     }
+}
+
+fun Fragment.printBackStackSize(): Int{
+    return requireActivity().supportFragmentManager.backStackEntryCount
 }
